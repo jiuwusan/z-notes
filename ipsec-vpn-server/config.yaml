@@ -3,14 +3,11 @@
 # Mihomo 基础配置
 # ========================================
 
-port: 7890
 socks-port: 7891
-redir-port: 7892
 mixed-port: 7893
-tproxy-port: 7895
 
 mode: rule
-log-level: info
+log-level: warning
 ipv6: false
 
 allow-lan: true
@@ -34,7 +31,7 @@ tun:
   stack: mips
   device: mihomo
   auto-route: true
-  # auto-redirect: true
+  auto-redirect: false
   auto-detect-interface: true
   dns-hijack:
     - any:53
@@ -42,7 +39,7 @@ tun:
   route-exclude-address:
     - 10.0.0.0/8
     - 172.16.0.0/12
-    - 192.168.50.0/24
+    - 192.168.0.0/16  # 私有地址，包含 VPN 地址池及局域网
 
 # ========================================
 # DNS 配置
@@ -107,5 +104,7 @@ rules:
   - IP-CIDR,203.0.113.0/24,DIRECT,no-resolve
   - IP-CIDR,224.0.0.0/4,DIRECT,no-resolve
   - IP-CIDR,240.0.0.0/4,DIRECT,no-resolve
+  # 中国大陆 IP 直连
+  - GEOIP,CN,DIRECT
   # 其他所有流量走 OpenWrt SOCKS5
   - MATCH,🚀 科学上网
