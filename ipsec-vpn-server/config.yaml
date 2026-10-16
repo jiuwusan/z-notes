@@ -1,4 +1,3 @@
-
 # ========================================
 # Mihomo 基础配置
 # ========================================
@@ -10,14 +9,26 @@ mode: rule
 log-level: warning
 ipv6: false
 
+# ========================================
+# 代理访问与认证
+# ========================================
+
 allow-lan: true
 bind-address: "*"
 
 authentication:
   - "Clash:uKlYPsb3"
 
+# ========================================
+# 控制 API
+# ========================================
+
 external-controller: 127.0.0.1:9090
 secret: "ZkD953HzR497!"
+
+# ========================================
+# 实验性配置
+# ========================================
 
 experimental:
   ignore-resolve-fail: true
@@ -39,7 +50,7 @@ tun:
   route-exclude-address:
     - 10.0.0.0/8
     - 172.16.0.0/12
-    - 192.168.0.0/16  # 私有地址，包含 VPN 地址池及局域网
+    - 192.168.0.0/16
 
 # ========================================
 # DNS 配置
@@ -50,11 +61,7 @@ dns:
   listen: 0.0.0.0:1053
   ipv6: false
   enhanced-mode: redir-host
-  default-nameserver:
-    - 192.168.50.2
   nameserver:
-    - 192.168.50.2
-  proxy-server-nameserver:
     - 192.168.50.2
 
 # ========================================
@@ -85,17 +92,12 @@ proxy-groups:
 # ========================================
 
 rules:
-  # 本机回环
   - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
-  # RFC 1918 私有地址
   - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
   - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
   - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
-  # 链路本地地址
   - IP-CIDR,169.254.0.0/16,DIRECT,no-resolve
-  # CGNAT 地址
   - IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
-  # 保留和特殊用途地址
   - IP-CIDR,0.0.0.0/8,DIRECT,no-resolve
   - IP-CIDR,192.0.0.0/24,DIRECT,no-resolve
   - IP-CIDR,192.0.2.0/24,DIRECT,no-resolve
@@ -104,7 +106,5 @@ rules:
   - IP-CIDR,203.0.113.0/24,DIRECT,no-resolve
   - IP-CIDR,224.0.0.0/4,DIRECT,no-resolve
   - IP-CIDR,240.0.0.0/4,DIRECT,no-resolve
-  # 中国大陆 IP 直连
   - GEOIP,CN,DIRECT
-  # 其他所有流量走 OpenWrt SOCKS5
   - MATCH,🚀 科学上网
