@@ -1,0 +1,111 @@
+
+# ========================================
+# Mihomo 基础配置
+# ========================================
+
+port: 7890
+socks-port: 7891
+redir-port: 7892
+mixed-port: 7893
+tproxy-port: 7895
+
+mode: rule
+log-level: info
+ipv6: false
+
+allow-lan: true
+bind-address: "*"
+
+authentication:
+  - "Clash:uKlYPsb3"
+
+external-controller: 127.0.0.1:9090
+secret: "ZkD953HzR497!"
+
+experimental:
+  ignore-resolve-fail: true
+
+# ========================================
+# TUN 透明代理
+# ========================================
+
+tun:
+  enable: true
+  stack: gvisor
+  device: mihomo
+  auto-route: true
+  #auto-redirect: false
+  auto-detect-interface: true
+  dns-hijack:
+    - any:53
+    - tcp://any:53
+  route-exclude-address:
+    - 10.0.0.0/8
+    - 172.16.0.0/12
+    - 192.168.50.0/24
+
+# ========================================
+# DNS 配置
+# ========================================
+
+dns:
+  enable: true
+  listen: 0.0.0.0:1053
+  ipv6: false
+  enhanced-mode: redir-host
+  default-nameserver:
+    - 192.168.50.2
+  nameserver:
+    - 192.168.50.2
+  proxy-server-nameserver:
+    - 192.168.50.2
+
+# ========================================
+# OpenWrt SOCKS5 上游代理
+# ========================================
+
+proxies:
+  - name: OpenWrt-SOCKS5
+    type: socks5
+    server: 192.168.50.2
+    port: 7891
+    udp: true
+    username: Clash
+    password: hfEN1AZd
+
+# ========================================
+# 代理策略组
+# ========================================
+
+proxy-groups:
+  - name: 🚀 科学上网
+    type: select
+    proxies:
+      - OpenWrt-SOCKS5
+
+# ========================================
+# 分流规则
+# ========================================
+
+rules:
+  # 本机回环
+  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+  # RFC 1918 私有地址
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  # 链路本地地址
+  - IP-CIDR,169.254.0.0/16,DIRECT,no-resolve
+  # CGNAT 地址
+  - IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+  # 保留和特殊用途地址
+  - IP-CIDR,0.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,192.0.0.0/24,DIRECT,no-resolve
+  - IP-CIDR,192.0.2.0/24,DIRECT,no-resolve
+  - IP-CIDR,198.18.0.0/15,DIRECT,no-resolve
+  - IP-CIDR,198.51.100.0/24,DIRECT,no-resolve
+  - IP-CIDR,203.0.113.0/24,DIRECT,no-resolve
+  - IP-CIDR,224.0.0.0/4,DIRECT,no-resolve
+  - IP-CIDR,240.0.0.0/4,DIRECT,no-resolve
+  # 其他所有流量走 OpenWrt SOCKS5
+  - MATCH,🚀 科学上网

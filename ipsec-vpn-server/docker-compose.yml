@@ -1,0 +1,40 @@
+
+services:
+  vpn-mihomo:
+    image: metacubex/mihomo:latest
+    container_name: vpn-mihomo
+    restart: always
+    privileged: true
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      # IPsec VPN
+      - "500:500/udp"
+      - "4500:4500/udp"
+      - "1701:1701/udp"
+    volumes:
+      - ./config:/root/.config/mihomo
+    networks:
+      - wk
+
+  ipsec-vpn-server:
+    image: hwdsl2/ipsec-vpn-server:debian
+    container_name: ipsec-vpn-server
+    restart: always
+    privileged: true
+    env_file:
+      - ./data/vpn.env
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./data/ipsec.d:/etc/ipsec.d
+      - /lib/modules:/lib/modules:ro
+    # 与 Mihomo 共享网络命名空间
+    network_mode: "service:vpn-mihomo"
+    depends_on:
+      vpn-mihomo:
+        condition: service_started
+
+networks:
+  wk:
+    external: true
