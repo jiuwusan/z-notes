@@ -31,10 +31,10 @@ experimental:
 
 tun:
   enable: true
-  stack: gvisor
+  stack: mips
   device: mihomo
   auto-route: true
-  #auto-redirect: false
+  # auto-redirect: true
   auto-detect-interface: true
   dns-hijack:
     - any:53

@@ -7,6 +7,8 @@ services:
     privileged: true
     environment:
       TZ: Asia/Shanghai
+    dns:
+      - 192.168.50.2
     ports:
       # IPsec VPN
       - "500:500/udp"
@@ -20,6 +22,7 @@ services:
   ipsec-vpn-server:
     image: hwdsl2/ipsec-vpn-server:debian
     container_name: ipsec-vpn-server
+    command: ["/bin/sh", "/opt/src/start-with-tun.sh", "/opt/src/run.sh"]
     restart: always
     privileged: true
     env_file:
@@ -29,6 +32,7 @@ services:
     volumes:
       - ./data/ipsec.d:/etc/ipsec.d
       - /lib/modules:/lib/modules:ro
+      - ./scripts/start-with-tun.sh:/opt/src/start-with-tun.sh:ro
     # 与 Mihomo 共享网络命名空间
     network_mode: "service:vpn-mihomo"
     depends_on:
