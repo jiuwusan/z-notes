@@ -1,0 +1,19 @@
+services:
+  mihomo:
+    image: metacubex/mihomo:latest
+    container_name: mihomo
+    environment:
+      TZ: Asia/Shanghai
+    restart: always
+    privileged: true
+    ports:
+      - "37893:7893/tcp"
+      - "37893:7893/udp"
+    volumes:
+      - ./config:/root/.config/mihomo
+    networks:
+      - wk
+
+networks:
+  wk:
+    external: true

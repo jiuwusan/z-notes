@@ -1,0 +1,23 @@
+services:
+  ipsec-vpn-server:
+    image: hwdsl2/ipsec-vpn-server:debian
+    container_name: ipsec-vpn-server
+    env_file:
+      - ./data/vpn.env
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - 500:500/udp
+      - 1701:1701/udp
+      - 4500:4500/udp
+    volumes:
+      - ./data/ipsec.d:/etc/ipsec.d
+      - ./data/modules:/lib/modules
+    restart: always
+    privileged: true
+    networks:
+      - wk
+
+networks:
+  wk:
+    external: true
