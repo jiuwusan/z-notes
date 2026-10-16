@@ -1,8 +1,8 @@
 
 services:
-  vpn-mihomo:
+  ipsec-vpn-mihomo:
     image: metacubex/mihomo:latest
-    container_name: vpn-mihomo
+    container_name: ipsec-vpn-mihomo
     restart: always
     privileged: true
     environment:
@@ -34,9 +34,9 @@ services:
       - /lib/modules:/lib/modules:ro
       - ./scripts/start-with-tun.sh:/opt/src/start-with-tun.sh:ro
     # 与 Mihomo 共享网络命名空间
-    network_mode: "service:vpn-mihomo"
+    network_mode: "service:ipsec-vpn-mihomo"
     depends_on:
-      vpn-mihomo:
+      ipsec-vpn-mihomo:
         condition: service_started
 
 networks:
